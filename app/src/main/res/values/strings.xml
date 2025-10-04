@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">sqlite_test</string>
+
+    <string-array name="tipos_libro">
+        <item>Fantasia</item>
+        <item>Misterio</item>
+        <item>Romance</item>
+    </string-array>
+
+    <string-array name="estados_lectura">
+        <item>Pendiente</item>
+        <item>Leyendo</item>
+        <item>Leido</item>
+    </string-array>
 </resources>
