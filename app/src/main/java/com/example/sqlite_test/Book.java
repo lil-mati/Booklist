@@ -4,11 +4,13 @@ public class Book {
     private long id;
     private String title;
     private String author;
+    private String comment;
 
     public Book(long id, String title, String author) {
         this.id = id;
         this.title = title;
         this.author = author;
+        this.comment = null;
     }
 
     public long getId() {
@@ -21,5 +23,13 @@ public class Book {
 
     public String getAuthor() {
         return author;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
