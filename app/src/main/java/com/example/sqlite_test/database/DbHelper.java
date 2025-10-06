@@ -1,10 +1,13 @@
 package com.example.sqlite_test.database;
 
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.sqlite_test.Models.libro;
 import com.example.sqlite_test.database.contracts.collectionContract;
 
 public class DbHelper extends SQLiteOpenHelper {
@@ -57,21 +60,103 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_COLLECTION_ENTRIES);
-        db.execSQL(SQL_CREATE_LIBRO_ENTRIES);
-        db.execSQL(SQL_CREATE_USUARIO_ENTRIES);
         db.execSQL(SQL_CREATE_TIPO_ENTRIES);
         db.execSQL(SQL_CREATE_ESTADO_ENTRIES);
+        db.execSQL(SQL_CREATE_LIBRO_ENTRIES);
+        db.execSQL(SQL_CREATE_USUARIO_ENTRIES);
+        db.execSQL(SQL_CREATE_COLLECTION_ENTRIES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + collectionContract.collectionEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + collectionContract.libroEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + collectionContract.usuarioEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + collectionContract.tipoLibroEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + collectionContract.estadoLecturaEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + collectionContract.libroEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + collectionContract.usuarioEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + collectionContract.collectionEntry.TABLE_NAME);
         onCreate(db);
     }
 
+    public long insertLibro (libro newlibro){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(collectionContract.libroEntry.COLUMN_TITULO, newlibro.getTitulo());
+        values.put(collectionContract.libroEntry.COLUMN_AUTOR, newlibro.getAutor());
+        values.put(collectionContract.libroEntry.COLUMN_ESTADO, newlibro.getEstado());
+        values.put(collectionContract.libroEntry.COLUMN_FECHA_PUBLICACION, newlibro.getFechaPublicacion());
+
+        long newRowId;
+        newRowId = db.insert(collectionContract.libroEntry.TABLE_NAME, null, values);
+
+        db.close();
+        return newRowId;
+    }
+
+    public void insertDatosIniciales() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " +
+                collectionContract.libroEntry.TABLE_NAME, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+
+        if (count == 0) {
+            ContentValues valuesTipo = new ContentValues();
+
+            valuesTipo.put(collectionContract.tipoLibroEntry.COLUMN_NOMBRE, "Fantasia");
+            valuesTipo.put(collectionContract.tipoLibroEntry.COLUMN_DESCRIPCION, "Libros de fantasía");
+            db.insert(collectionContract.tipoLibroEntry.TABLE_NAME, null, valuesTipo);
+
+            valuesTipo.put(collectionContract.tipoLibroEntry.COLUMN_NOMBRE, "Misterio");
+            valuesTipo.put(collectionContract.tipoLibroEntry.COLUMN_DESCRIPCION, "Libros de misterio");
+            db.insert(collectionContract.tipoLibroEntry.TABLE_NAME, null, valuesTipo);
+
+            valuesTipo.put(collectionContract.tipoLibroEntry.COLUMN_NOMBRE, "Romance");
+            valuesTipo.put(collectionContract.tipoLibroEntry.COLUMN_DESCRIPCION, "Libros de romance");
+            db.insert(collectionContract.tipoLibroEntry.TABLE_NAME, null, valuesTipo);
+
+            ContentValues valuesEstado = new ContentValues();
+
+            valuesEstado.put(collectionContract.estadoLecturaEntry.COLUMN_NOMBRE, "Pendiente");
+            db.insert(collectionContract.estadoLecturaEntry.TABLE_NAME, null, valuesEstado);
+
+            valuesEstado.put(collectionContract.estadoLecturaEntry.COLUMN_NOMBRE, "Leyendo");
+            db.insert(collectionContract.estadoLecturaEntry.TABLE_NAME, null, valuesEstado);
+
+            valuesEstado.put(collectionContract.estadoLecturaEntry.COLUMN_NOMBRE, "Leido");
+            db.insert(collectionContract.estadoLecturaEntry.TABLE_NAME, null, valuesEstado);
+        }
+
+        db.close();
+    }
+
+    public void inicializarBaseDeDatos() {
+        insertDatosIniciales();
+    }
+
+    public Cursor getLibros() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(
+                collectionContract.libroEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                collectionContract.libroEntry.COLUMN_TITULO + " DESC"
+        );
+    }
+
+    public boolean eliminarLibro(long id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete(
+                collectionContract.libroEntry.TABLE_NAME,
+                collectionContract.libroEntry.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)}
+        );
+        db.close();
+        return rowsDeleted > 0;
+    }
 }

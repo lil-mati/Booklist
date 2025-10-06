@@ -7,6 +7,8 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.sqlite_test.database.DbHelper;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button button1, button2;
@@ -36,5 +38,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        try (DbHelper dbHelper = new DbHelper(this)) {
+            dbHelper.inicializarBaseDeDatos();
+        }
     }
 }

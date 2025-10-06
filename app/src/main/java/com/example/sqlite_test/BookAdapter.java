@@ -15,11 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.sqlite_test.Models.libro;
+import com.example.sqlite_test.database.DbHelper;
+
 import java.util.List;
 
-public class BookAdapter extends ArrayAdapter<Book> {
+public class BookAdapter extends ArrayAdapter<libro> {
 
-    public BookAdapter(@NonNull Context context, @NonNull List<Book> objects) {
+    public BookAdapter(@NonNull Context context, @NonNull List<libro> objects) {
         super(context, 0, objects);
     }
 
@@ -27,7 +30,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         // Get the data item for this position
-        Book book = getItem(position);
+        libro libroActual = getItem(position);
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
@@ -42,40 +45,33 @@ public class BookAdapter extends ArrayAdapter<Book> {
         Button btnDelete = convertView.findViewById(R.id.buttonDelete);
 
         // Populate the data into the template view using the data object
-        tvTitle.setText(book.getTitle());
-        tvAuthor.setText(book.getAuthor());
+        assert libroActual != null;
+        tvTitle.setText(libroActual.getTitulo());
+        tvAuthor.setText(libroActual.getAutor());
 
-        // Show or hide the comment
-        if (book.getComment() != null && !book.getComment().isEmpty()) {
-            tvComment.setText("Comentario: " + book.getComment());
-            tvComment.setVisibility(View.VISIBLE);
-        } else {
-            tvComment.setVisibility(View.GONE);
-        }
-
-        // Cache the row position in the button's tag
-        btnEdit.setTag(position);
-        btnDelete.setTag(position);
-
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Logic for editing (adding a comment)
-                showEditDialog(book);
-            }
-        });
+        tvComment.setVisibility(View.GONE);
+        btnEdit.setVisibility(View.GONE);
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Logic for deleting the book
-                // You would typically remove the book from the database and the list
-                Toast.makeText(getContext(), "Eliminar libro: " + book.getTitle(), Toast.LENGTH_SHORT).show();
+                libro delLibro = getItem(position);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Confirmar eliminación")
+                        .setMessage("¿Eliminar \"" + delLibro.getTitulo() + "\"?")
+                        .setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                eliminarLibro(delLibro.getId(), position);
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
+
         });
 
-
-        // Return the completed view to render on screen
         return convertView;
     }
 
@@ -107,5 +103,19 @@ public class BookAdapter extends ArrayAdapter<Book> {
         });
 
         builder.show();
+    }
+
+    private void eliminarLibro(long id, int position) {
+        DbHelper dbHelper = new DbHelper(getContext());
+        boolean eliminado = dbHelper.eliminarLibro(id);
+
+        if (eliminado) {
+            remove(getItem(position));
+            notifyDataSetChanged();
+            Toast.makeText(getContext(), "Libro eliminado", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Error al eliminar", Toast.LENGTH_SHORT).show();
+        }
+        dbHelper.close();
     }
 }

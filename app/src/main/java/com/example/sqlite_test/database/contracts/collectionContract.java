@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 public class collectionContract {
 
     public static class libroEntry  {
-        public static final String TABLE_NAME = "usuario";
+        public static final String TABLE_NAME = "libros";
         public static final String COLUMN_ID = "id";
         public static final String COLUMN_TITULO = "titulo";
         public static final String COLUMN_AUTOR = "autor";

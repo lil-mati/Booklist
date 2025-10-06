@@ -26,5 +26,11 @@ public class libro {
     public void setTitulo(String titulo) { this.titulo = titulo; }
     public String getAutor() { return autor; }
     public void setAutor(String autor) { this.autor = autor; }
+    public int getEstado() { return estado; }
+    public void setEstado(int estado) { this.estado = estado; }
+    public String getFechaPublicacion() { return fechaPublicacion; }
+    public void setFechaPublicacion(String fechaPublicacion) { this.fechaPublicacion = fechaPublicacion; }
+    public int getIdTipo() { return idTipo; }
+    public void setIdTipo(int idTipo) { this.idTipo = idTipo; }
 
 }
