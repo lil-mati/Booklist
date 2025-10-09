@@ -12,6 +12,7 @@ public class collectionContract {
         public static final String COLUMN_ESTADO = "estado";
         public static final String COLUMN_FECHA_PUBLICACION = "fecha";
         public static final String COLUMN_ID_TIPO = "id_tipo";
+        public static final String COLUMN_COMENTARIO = "comentario";
 
 
     }

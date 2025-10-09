@@ -12,9 +12,14 @@ import com.example.sqlite_test.database.contracts.collectionContract;
 
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "coleccion_libros.db";
-    public static final int DATABASE_VERSION = 1;
 
-    private static final String SQL_CREATE_COLLECTION_ENTRIES =
+    // esto actualiza la version (1 -> 2) de la db para insertar
+    // la nueva columna "comentario" en la tabla "libro"
+    // los datos previos localmente SE ELIMINARAN
+    // (no estoy seguro si solo elimina datos de la tabla "libro" o de la base entera)
+    public static final int DATABASE_VERSION = 2;
+
+    private static final String SQL_CREATE_COLLECTION_ENTRIES = 
             "CREATE TABLE " + collectionContract.collectionEntry.TABLE_NAME + " (" +
                     collectionContract.collectionEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     collectionContract.collectionEntry.COLUMN_ID_USUARIO + " INTEGER, " +
@@ -32,6 +37,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     collectionContract.libroEntry.COLUMN_ESTADO + " INTEGER, " +
                     collectionContract.libroEntry.COLUMN_FECHA_PUBLICACION + " TEXT, " +
                     collectionContract.libroEntry.COLUMN_ID_TIPO + " INTEGER, " +
+                    collectionContract.libroEntry.COLUMN_COMENTARIO + " TEXT, " +
                     "FOREIGN KEY(" + collectionContract.libroEntry.COLUMN_ESTADO + ") REFERENCES " +
                     collectionContract.estadoLecturaEntry.TABLE_NAME + "(" + collectionContract.estadoLecturaEntry.COLUMN_ID + "))";
 
@@ -69,6 +75,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Esta implementación borra los datos. En una app real, se usaría ALTER TABLE.
         db.execSQL("DROP TABLE IF EXISTS " + collectionContract.tipoLibroEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + collectionContract.estadoLecturaEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + collectionContract.libroEntry.TABLE_NAME);
@@ -85,12 +92,33 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(collectionContract.libroEntry.COLUMN_AUTOR, newlibro.getAutor());
         values.put(collectionContract.libroEntry.COLUMN_ESTADO, newlibro.getEstado());
         values.put(collectionContract.libroEntry.COLUMN_FECHA_PUBLICACION, newlibro.getFechaPublicacion());
+        values.put(collectionContract.libroEntry.COLUMN_COMENTARIO, newlibro.getComment()); // Guardar también el comentario inicial
 
         long newRowId;
         newRowId = db.insert(collectionContract.libroEntry.TABLE_NAME, null, values);
 
         db.close();
         return newRowId;
+    }
+
+    // NUEVO MÉTODO PARA ACTUALIZAR EL COMENTARIO
+    public int actualizarComentarioLibro(long libroId, String comentario) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(collectionContract.libroEntry.COLUMN_COMENTARIO, comentario);
+
+        String selection = collectionContract.libroEntry.COLUMN_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(libroId) };
+
+        int count = db.update(
+                collectionContract.libroEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+        
+        // No cerramos la db aquí para poder reutilizar el helper
+        return count;
     }
 
     public void insertDatosIniciales() {
@@ -140,7 +168,7 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(
                 collectionContract.libroEntry.TABLE_NAME,
-                null,
+                null, // null para obtener todas las columnas
                 null,
                 null,
                 null,

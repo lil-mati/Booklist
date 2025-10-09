@@ -7,6 +7,7 @@ public class libro {
     private int estado;
     private String fechaPublicacion;
     private int idTipo;
+    private String comment; // Campo añadido
 
     public libro() {}
 
@@ -17,7 +18,6 @@ public class libro {
         this.estado = estado;
         this.fechaPublicacion = fechaPublicacion;
         this.idTipo = idTipo;
-
     }
 
     public long getId() { return id; }
@@ -33,4 +33,7 @@ public class libro {
     public int getIdTipo() { return idTipo; }
     public void setIdTipo(int idTipo) { this.idTipo = idTipo; }
 
+    // Métodos añadidos
+    public String getComment() { return comment; }
+    public void setComment(String comment) { this.comment = comment; }
 }

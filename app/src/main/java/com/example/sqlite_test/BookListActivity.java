@@ -40,6 +40,8 @@ public class BookListActivity extends AppCompatActivity {
                         libro.setEstado(cursor.getInt(cursor.getColumnIndexOrThrow(collectionContract.libroEntry.COLUMN_ESTADO)));
                         libro.setFechaPublicacion(cursor.getString(cursor.getColumnIndexOrThrow(collectionContract.libroEntry.COLUMN_FECHA_PUBLICACION)));
                         libro.setIdTipo(cursor.getInt(cursor.getColumnIndexOrThrow(collectionContract.libroEntry.COLUMN_ID_TIPO)));
+                        libro.setComment(cursor.getString(cursor.getColumnIndexOrThrow(collectionContract.libroEntry.COLUMN_COMENTARIO)));
+
 
                         listaLibros.add(libro);
                         Log.d("DEBUG", "Libro añadido: " + libro.getTitulo());

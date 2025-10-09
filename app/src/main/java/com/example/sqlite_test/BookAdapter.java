@@ -49,8 +49,25 @@ public class BookAdapter extends ArrayAdapter<libro> {
         tvTitle.setText(libroActual.getTitulo());
         tvAuthor.setText(libroActual.getAutor());
 
-        tvComment.setVisibility(View.GONE);
-        btnEdit.setVisibility(View.GONE);
+        // Show or hide the comment
+        if (libroActual.getComment() != null && !libroActual.getComment().isEmpty()) {
+            tvComment.setText("Comentario: " + libroActual.getComment());
+            tvComment.setVisibility(View.VISIBLE);
+        } else {
+            tvComment.setVisibility(View.GONE);
+        }
+
+        // Cache the row position in the button's tag
+        btnEdit.setTag(position);
+        btnDelete.setTag(position);
+
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Logic for editing (adding a comment)
+                showEditDialog(libroActual);
+            }
+        });
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +92,7 @@ public class BookAdapter extends ArrayAdapter<libro> {
         return convertView;
     }
 
-    private void showEditDialog(final Book book) {
+    private void showEditDialog(final libro book) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Añadir Comentario");
 
@@ -90,9 +107,21 @@ public class BookAdapter extends ArrayAdapter<libro> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String comment = input.getText().toString();
-                book.setComment(comment);
-                notifyDataSetChanged(); // Refresh the list to show the new comment
-                Toast.makeText(getContext(), "Comentario guardado", Toast.LENGTH_SHORT).show();
+                
+                // --- INICIO DE LA LÓGICA DE GUARDADO EN DB ---
+                DbHelper dbHelper = new DbHelper(getContext());
+                int rowsAffected = dbHelper.actualizarComentarioLibro(book.getId(), comment);
+                dbHelper.close();
+                // --- FIN DE LA LÓGICA DE GUARDADO EN DB ---
+
+                if (rowsAffected > 0) {
+                    // Actualiza el objeto en la lista y notifica al adaptador
+                    book.setComment(comment);
+                    notifyDataSetChanged(); // Refresh the list to show the new comment
+                    Toast.makeText(getContext(), "Comentario guardado", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error al guardar el comentario", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
