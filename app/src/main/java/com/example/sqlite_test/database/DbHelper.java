@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.sqlite_test.Models.libro;
+import com.example.sqlite_test.Models.usuario;
 import com.example.sqlite_test.database.contracts.collectionContract;
 
 public class DbHelper extends SQLiteOpenHelper {
@@ -158,5 +159,50 @@ public class DbHelper extends SQLiteOpenHelper {
         );
         db.close();
         return rowsDeleted > 0;
+    }
+
+    public long insertUsuario(usuario newusuario){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(collectionContract.usuarioEntry.COLUMN_APELLIDO, newusuario.getApellido());
+        values.put(collectionContract.usuarioEntry.COLUMN_NOMBRE, newusuario.getNombre());
+        values.put(collectionContract.usuarioEntry.COLUMN_USUARIO, newusuario.getUsuario());
+        values.put(collectionContract.usuarioEntry.COLUMN_CONTRASEÑA, newusuario.getContraseña());
+
+        long newRowId;
+        newRowId = db.insert(collectionContract.usuarioEntry.TABLE_NAME, null, values);
+
+        db.close();
+        return newRowId;
+    }
+
+    public boolean validarUsuario(String usuario, String contraseña) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        //columnas a verificar
+        String[] projection = {
+                collectionContract.usuarioEntry.COLUMN_ID
+        };
+
+        //query o consulta
+        String selection = collectionContract.usuarioEntry.COLUMN_USUARIO + " = ? COLLATE NOCASE AND " +
+                collectionContract.usuarioEntry.COLUMN_CONTRASEÑA + " = ?";
+        String[] selecciones = {usuario, contraseña};
+
+        //recorre tablas y la consulta realizada
+        Cursor cursor = db.query(
+                collectionContract.usuarioEntry.TABLE_NAME,
+                projection,
+                selection,
+                selecciones,
+                null,
+                null,
+                null
+        );
+
+        boolean valido = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return valido;
     }
 }
