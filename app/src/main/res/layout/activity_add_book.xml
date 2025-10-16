@@ -3,14 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:background="@drawable/gradient_background"
     tools:context=".AddBookActivity">
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Atrás"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -18,25 +29,29 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
             android:text="Añadir Libro"
+            android:textColor="@android:color/black"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Título:" />
+            android:text="Título:"
+            android:textColor="@android:color/black" />
 
         <EditText
             android:id="@+id/editTextTitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Tipo:" />
+            android:text="Tipo:"
+            android:textColor="@android:color/black" />
 
         <Spinner
             android:id="@+id/spinnerTipo"
@@ -47,19 +62,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Autor:" />
+            android:text="Autor:"
+            android:textColor="@android:color/black" />
 
         <EditText
             android:id="@+id/editTextAutor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="text"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Fecha de Publicación:" />
+            android:text="Fecha de Publicación:"
+            android:textColor="@android:color/black" />
 
         <EditText
             android:id="@+id/editTextFechaPublicacion"
@@ -67,13 +85,15 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="false"
-            android:hint="Seleccione una fecha" />
+            android:hint="Seleccione una fecha"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Estado de Lectura:" />
+            android:text="Estado de Lectura:"
+            android:textColor="@android:color/black" />
 
         <Spinner
             android:id="@+id/spinnerEstadoLectura"
@@ -86,6 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp"
-            android:text="Guardar" />
+            android:text="Guardar"
+            android:textColor="@android:color/black" />
     </LinearLayout>
 </RelativeLayout>

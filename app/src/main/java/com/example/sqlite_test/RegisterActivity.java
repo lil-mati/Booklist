@@ -27,6 +27,8 @@ public class RegisterActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
 
         Button registerButton = findViewById(R.id.buttonRegister);
+        Button backButton = findViewById(R.id.buttonBack);
+
         registerButton.setOnClickListener(v -> {
             // Obtener los datos del formulario
             String nombre = editTextNombre.getText().toString();
@@ -55,6 +57,10 @@ public class RegisterActivity extends AppCompatActivity {
 
             Toast.makeText(RegisterActivity.this, "Usuario registrado con éxito", Toast.LENGTH_SHORT).show();
             finish(); // Cierra esta actividad y vuelve a LoginActivity
+        });
+
+        backButton.setOnClickListener(v -> {
+            finish(); // Cierra esta actividad y vuelve a la anterior
         });
     }
 }

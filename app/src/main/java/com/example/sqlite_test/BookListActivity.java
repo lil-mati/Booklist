@@ -3,6 +3,7 @@ package com.example.sqlite_test;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,6 +24,9 @@ public class BookListActivity extends AppCompatActivity {
 
         // Find the ListView
         ListView listViewBooks = findViewById(R.id.listViewBooks);
+        Button backButton = findViewById(R.id.buttonBack);
+
+        backButton.setOnClickListener(v -> finish());
 
         // Create an instance of the DbHelper
         DbHelper dbHelper = new DbHelper(this);

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/gradient_background"
     android:padding="16dp">
 
     <LinearLayout
@@ -19,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Título del Libro"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -26,6 +28,7 @@
             android:id="@+id/textViewAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:text="Autor" />
 
         <TextView
@@ -35,6 +38,7 @@
             android:layout_marginTop="4dp"
             android:textStyle="italic"
             android:visibility="gone"
+            android:textColor="@android:color/black"
             android:text="Comentario"/>
     </LinearLayout>
 
@@ -51,6 +55,7 @@
             android:id="@+id/buttonEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:text="📝" />
 
         <Button
@@ -58,6 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:textColor="@android:color/black"
             android:text="🗑️" />
     </LinearLayout>
 

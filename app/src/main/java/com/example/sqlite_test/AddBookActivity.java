@@ -25,6 +25,7 @@ public class AddBookActivity extends AppCompatActivity {
     private EditText editTextAutor;
     private Spinner spinnerEstadoLectura;
     private Button buttonGuardar;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class AddBookActivity extends AppCompatActivity {
         editTextTitulo = findViewById(R.id.editTextTitulo);
         editTextAutor = findViewById(R.id.editTextAutor);
         editTextFechaPublicacion = findViewById(R.id.editTextFechaPublicacion);
+        backButton = findViewById(R.id.buttonBack);
 
         // Configurar Spinner de Tipo
         spinnerTipo = findViewById(R.id.spinnerTipo);
@@ -55,6 +57,8 @@ public class AddBookActivity extends AppCompatActivity {
 
         buttonGuardar = findViewById(R.id.buttonGuardar);
         buttonGuardar.setOnClickListener(v -> guardarLibro());
+
+        backButton.setOnClickListener(v -> finish());
     }
 
     private void showDatePickerDialog() {
