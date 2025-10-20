@@ -1,6 +1,5 @@
 package com.example.sqlite_test.database;
 
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,12 +12,7 @@ import com.example.sqlite_test.database.contracts.collectionContract;
 
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "coleccion_libros.db";
-
-    // esto actualiza la version (1 -> 2) de la db para insertar
-    // la nueva columna "comentario" en la tabla "libro"
-    // los datos previos localmente SE ELIMINARAN
-    // (no estoy seguro si solo elimina datos de la tabla "libro" o de la base entera)
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3; // version de la db
 
     private static final String SQL_CREATE_COLLECTION_ENTRIES = 
             "CREATE TABLE " + collectionContract.collectionEntry.TABLE_NAME + " (" +
@@ -39,8 +33,11 @@ public class DbHelper extends SQLiteOpenHelper {
                     collectionContract.libroEntry.COLUMN_FECHA_PUBLICACION + " TEXT, " +
                     collectionContract.libroEntry.COLUMN_ID_TIPO + " INTEGER, " +
                     collectionContract.libroEntry.COLUMN_COMENTARIO + " TEXT, " +
+                    collectionContract.libroEntry.COLUMN_ID_USUARIO + " INTEGER, " +
                     "FOREIGN KEY(" + collectionContract.libroEntry.COLUMN_ESTADO + ") REFERENCES " +
-                    collectionContract.estadoLecturaEntry.TABLE_NAME + "(" + collectionContract.estadoLecturaEntry.COLUMN_ID + "))";
+                    collectionContract.estadoLecturaEntry.TABLE_NAME + "(" + collectionContract.estadoLecturaEntry.COLUMN_ID + "), " +
+                    "FOREIGN KEY(" + collectionContract.libroEntry.COLUMN_ID_USUARIO + ") REFERENCES " +
+                    collectionContract.usuarioEntry.TABLE_NAME + "(" + collectionContract.usuarioEntry.COLUMN_ID + "))";
 
     private static final String SQL_CREATE_USUARIO_ENTRIES =
             "CREATE TABLE " + collectionContract.usuarioEntry.TABLE_NAME + " (" +
@@ -69,8 +66,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TIPO_ENTRIES);
         db.execSQL(SQL_CREATE_ESTADO_ENTRIES);
-        db.execSQL(SQL_CREATE_LIBRO_ENTRIES);
         db.execSQL(SQL_CREATE_USUARIO_ENTRIES);
+        db.execSQL(SQL_CREATE_LIBRO_ENTRIES);
         db.execSQL(SQL_CREATE_COLLECTION_ENTRIES);
     }
 
@@ -85,7 +82,7 @@ public class DbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertLibro (libro newlibro){
+    public long insertLibro (libro newlibro, long userId){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -93,7 +90,8 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(collectionContract.libroEntry.COLUMN_AUTOR, newlibro.getAutor());
         values.put(collectionContract.libroEntry.COLUMN_ESTADO, newlibro.getEstado());
         values.put(collectionContract.libroEntry.COLUMN_FECHA_PUBLICACION, newlibro.getFechaPublicacion());
-        values.put(collectionContract.libroEntry.COLUMN_COMENTARIO, newlibro.getComment()); // Guardar también el comentario inicial
+        values.put(collectionContract.libroEntry.COLUMN_COMENTARIO, newlibro.getComment());
+        values.put(collectionContract.libroEntry.COLUMN_ID_USUARIO, userId);
 
         long newRowId;
         newRowId = db.insert(collectionContract.libroEntry.TABLE_NAME, null, values);
@@ -102,7 +100,6 @@ public class DbHelper extends SQLiteOpenHelper {
         return newRowId;
     }
 
-    // ACTUALIZAR EL COMENTARIO Y ESTADO DE UN LIBRO
     public int actualizarLibro(long libroId, String comentario, int estado) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -119,7 +116,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 selection,
                 selectionArgs);
         
-        // No cerramos la db aquí para poder reutilizar el helper
         return count;
     }
 
@@ -166,13 +162,13 @@ public class DbHelper extends SQLiteOpenHelper {
         insertDatosIniciales();
     }
 
-    public Cursor getLibros() {
+    public Cursor getLibros(long userId) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(
                 collectionContract.libroEntry.TABLE_NAME,
                 null, // null para obtener todas las columnas
-                null,
-                null,
+                collectionContract.libroEntry.COLUMN_ID_USUARIO + " = ?",
+                new String[]{String.valueOf(userId)},
                 null,
                 null,
                 collectionContract.libroEntry.COLUMN_TITULO + " DESC"
@@ -206,19 +202,16 @@ public class DbHelper extends SQLiteOpenHelper {
         return newRowId;
     }
 
-    public boolean validarUsuario(String usuario, String contraseña) {
+    public long validarUsuario(String usuario, String contraseña) {
         SQLiteDatabase db = this.getReadableDatabase();
-        //columnas a verificar
         String[] projection = {
                 collectionContract.usuarioEntry.COLUMN_ID
         };
 
-        //query o consulta
         String selection = collectionContract.usuarioEntry.COLUMN_USUARIO + " = ? COLLATE NOCASE AND " +
                 collectionContract.usuarioEntry.COLUMN_CONTRASEÑA + " = ?";
         String[] selecciones = {usuario, contraseña};
 
-        //recorre tablas y la consulta realizada
         Cursor cursor = db.query(
                 collectionContract.usuarioEntry.TABLE_NAME,
                 projection,
@@ -229,9 +222,12 @@ public class DbHelper extends SQLiteOpenHelper {
                 null
         );
 
-        boolean valido = cursor.getCount() > 0;
+        long userId = -1;
+        if (cursor.moveToFirst()) {
+            userId = cursor.getLong(cursor.getColumnIndexOrThrow(collectionContract.usuarioEntry.COLUMN_ID));
+        }
         cursor.close();
         db.close();
-        return valido;
+        return userId;
     }
 }

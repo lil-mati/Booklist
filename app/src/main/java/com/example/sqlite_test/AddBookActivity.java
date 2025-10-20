@@ -1,7 +1,9 @@
 package com.example.sqlite_test;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -69,7 +71,6 @@ public class AddBookActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, year1, monthOfYear, dayOfMonth) -> {
-                    // El mes es 0-indexado, por eso se suma 1
                     String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year1;
                     editTextFechaPublicacion.setText(selectedDate);
                 }, year, month, day);
@@ -80,7 +81,6 @@ public class AddBookActivity extends AppCompatActivity {
         String titulo = editTextTitulo.getText().toString();
         String autor = editTextAutor.getText().toString();
         String fechaPublicacion = editTextFechaPublicacion.getText().toString();
-        String tipo = spinnerTipo.getSelectedItem().toString();
 
         if(titulo.isEmpty()){
             editTextTitulo.setError("El título es requerido");
@@ -106,6 +106,15 @@ public class AddBookActivity extends AppCompatActivity {
         int idTipo = posicionTipo + 1;
         int idEstado = posicionEstado + 1;
 
+        // Obtener el ID de usuario de SharedPreferences
+        SharedPreferences sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        long userId = sharedPref.getLong("user_id", -1);
+
+        if (userId == -1) {
+            Toast.makeText(this, "Error: no se pudo obtener el usuario.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         libro newlibro = new libro();
         newlibro.setTitulo(titulo);
         newlibro.setAutor(autor);
@@ -114,7 +123,7 @@ public class AddBookActivity extends AppCompatActivity {
         newlibro.setFechaPublicacion(fechaPublicacion);
 
         DbHelper dbHelper = new DbHelper(this);
-        long newRowId = dbHelper.insertLibro(newlibro);
+        long newRowId = dbHelper.insertLibro(newlibro, userId);
 
         if(newRowId == -1){
             Toast.makeText(this, "Error al guardar el libro", Toast.LENGTH_SHORT).show();
@@ -124,7 +133,6 @@ public class AddBookActivity extends AppCompatActivity {
             Intent intent = new Intent(AddBookActivity.this, BookListActivity.class);
             startActivity(intent);
             finish();
-
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.sqlite_test;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,22 +29,29 @@ public class LoginActivity extends AppCompatActivity {
         buttonRegister = findViewById(R.id.buttonRegister);
 
         buttonLogin.setOnClickListener(v -> {
-            // Lógica de inicio de sesión
             String usuario = editTextUsername.getText().toString();
             String contraseña = editTextPassword.getText().toString();
 
             if(usuario.isEmpty() || contraseña.isEmpty()){
                 Toast.makeText(this, "Por favor, ingrese un usuario y contraseña", Toast.LENGTH_SHORT).show();
+                return; 
             }
 
             DbHelper dbHelper = new DbHelper(this);
-            boolean acceso = dbHelper.validarUsuario(usuario, contraseña);
+            long userId = dbHelper.validarUsuario(usuario, contraseña);
             dbHelper.close();
 
-            if (acceso) {
+            if (userId != -1) {
+                // Guardar el ID de usuario en SharedPreferences
+                SharedPreferences sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putLong("user_id", userId);
+                editor.apply();
+
                 Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish(); // Finaliza LoginActivity para que el usuario no pueda volver con el botón de atrás
             } else {
                 Toast.makeText(this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                 editTextPassword.setText("");
@@ -51,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         buttonRegister.setOnClickListener(v -> {
-            // Lógica de registro
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });

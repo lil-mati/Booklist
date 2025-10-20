@@ -1,5 +1,7 @@
 package com.example.sqlite_test;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,15 +24,22 @@ public class BookListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
 
-        // Find the ListView
         ListView listViewBooks = findViewById(R.id.listViewBooks);
         Button backButton = findViewById(R.id.buttonBack);
 
         backButton.setOnClickListener(v -> finish());
 
-        // Create an instance of the DbHelper
+        SharedPreferences sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        long userId = sharedPref.getLong("user_id", -1);
+
+        if (userId == -1) {
+            Toast.makeText(this, "Error: sesión no iniciada.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         DbHelper dbHelper = new DbHelper(this);
-        Cursor cursor = dbHelper.getLibros();
+        Cursor cursor = dbHelper.getLibros(userId);
 
         ArrayList<libro> listaLibros = new ArrayList<>();
 
@@ -56,16 +65,11 @@ public class BookListActivity extends AppCompatActivity {
                 } while (cursor.moveToNext());
                 cursor.close();
             } else {
-                Toast.makeText(this, "No hay libros en la base de datos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No tienes libros en tu lista", Toast.LENGTH_SHORT).show();
             }
 
-
-            // Create the adapter to convert the array to views
             BookAdapter adapter = new BookAdapter(this, listaLibros);
 
-            // Attach the adapter to a ListView
             listViewBooks.setAdapter(adapter);
-
-
     }
 }
