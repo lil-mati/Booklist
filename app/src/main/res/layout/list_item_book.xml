@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/gradient_background"
-    android:paddingStart="24dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android.paddingStart="24dp"
+    android.paddingEnd="16dp"
+    android.paddingTop="8dp"
+    android.paddingBottom="8dp">
 
     <LinearLayout
         android:id="@+id/book_details"
@@ -36,6 +36,15 @@
             android:layout_height="wrap_content"
             android:textColor="#333333"
             android:text="Autor" />
+
+        <TextView
+            android:id="@+id/textViewStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textStyle="italic"
+            android:textColor="#555555"
+            android:text="Estado"/>
 
         <TextView
             android:id="@+id/textViewComment"

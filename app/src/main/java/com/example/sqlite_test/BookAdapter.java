@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ public class BookAdapter extends ArrayAdapter<libro> {
         TextView tvTitle = convertView.findViewById(R.id.textViewTitle);
         TextView tvAuthor = convertView.findViewById(R.id.textViewAuthor);
         TextView tvComment = convertView.findViewById(R.id.textViewComment);
+        TextView tvStatus = convertView.findViewById(R.id.textViewStatus);
         Button btnEdit = convertView.findViewById(R.id.buttonEdit);
         Button btnDelete = convertView.findViewById(R.id.buttonDelete);
 
@@ -48,6 +50,9 @@ public class BookAdapter extends ArrayAdapter<libro> {
         assert libroActual != null;
         tvTitle.setText(libroActual.getTitulo());
         tvAuthor.setText(libroActual.getAutor());
+
+        // Set status text
+        tvStatus.setText("Estado: " + getStatusString(libroActual.getEstado()));
 
         // Show or hide the comment
         if (libroActual.getComment() != null && !libroActual.getComment().isEmpty()) {
@@ -92,35 +97,59 @@ public class BookAdapter extends ArrayAdapter<libro> {
         return convertView;
     }
 
+    private String getStatusString(int statusId) {
+        switch (statusId) {
+            case 1:
+                return "Pendiente";
+            case 2:
+                return "Leyendo";
+            case 3:
+                return "Leido";
+            default:
+                return "Desconocido";
+        }
+    }
+
     private void showEditDialog(final libro book) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Añadir Comentario");
+        builder.setTitle("Editar Libro");
 
-        // Set up the input
-        final EditText input = new EditText(getContext());
-        input.setHint("Escribe tu comentario aquí");
-        input.setText(book.getComment()); // Pre-fill with existing comment
-        builder.setView(input);
+        // Inflate the custom layout
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edit_book, null);
+        builder.setView(dialogView);
+
+        final EditText inputComment = dialogView.findViewById(R.id.editTextComment);
+        final Spinner spinnerStatus = dialogView.findViewById(R.id.spinnerStatus);
+
+        // Setup spinner
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.estados_lectura, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerStatus.setAdapter(adapter);
+
+        // Pre-fill data
+        inputComment.setText(book.getComment());
+        spinnerStatus.setSelection(book.getEstado() - 1); // -1 because position is 0-indexed
+
 
         // Set up the buttons
         builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String comment = input.getText().toString();
-                
-                // --- INICIO DE LA LÓGICA DE GUARDADO EN DB ---
+                String comment = inputComment.getText().toString();
+                int status = spinnerStatus.getSelectedItemPosition() + 1;
+
                 DbHelper dbHelper = new DbHelper(getContext());
-                int rowsAffected = dbHelper.actualizarComentarioLibro(book.getId(), comment);
+                int rowsAffected = dbHelper.actualizarLibro(book.getId(), comment, status);
                 dbHelper.close();
-                // --- FIN DE LA LÓGICA DE GUARDADO EN DB ---
 
                 if (rowsAffected > 0) {
-                    // Actualiza el objeto en la lista y notifica al adaptador
                     book.setComment(comment);
-                    notifyDataSetChanged(); // Refresh the list to show the new comment
-                    Toast.makeText(getContext(), "Comentario guardado", Toast.LENGTH_SHORT).show();
+                    book.setEstado(status);
+                    notifyDataSetChanged();
+                    Toast.makeText(getContext(), "Libro actualizado", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Error al guardar el comentario", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error al actualizar", Toast.LENGTH_SHORT).show();
                 }
             }
         });

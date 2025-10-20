@@ -102,12 +102,13 @@ public class DbHelper extends SQLiteOpenHelper {
         return newRowId;
     }
 
-    // NUEVO MÉTODO PARA ACTUALIZAR EL COMENTARIO
-    public int actualizarComentarioLibro(long libroId, String comentario) {
+    // ACTUALIZAR EL COMENTARIO Y ESTADO DE UN LIBRO
+    public int actualizarLibro(long libroId, String comentario, int estado) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(collectionContract.libroEntry.COLUMN_COMENTARIO, comentario);
+        values.put(collectionContract.libroEntry.COLUMN_ESTADO, estado);
 
         String selection = collectionContract.libroEntry.COLUMN_ID + " = ?";
         String[] selectionArgs = { String.valueOf(libroId) };
