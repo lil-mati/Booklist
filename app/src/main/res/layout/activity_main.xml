@@ -10,19 +10,61 @@
     android:padding="24dp"
     tools:context=".MainActivity">
 
+    <!-- Ícono de Usuario -->
+    <ImageView
+        android:id="@+id/imageViewUserIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_account_circle"
+        android:contentDescription="@string/user_icon"
+        app:tint="#2196F3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="60dp" />
+
+    <!-- Mensaje de Bienvenida -->
+    <TextView
+        android:id="@+id/textViewWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Bienvenido!"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        app:layout_constraintTop_toBottomOf="@id/imageViewUserIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Nombre del Usuario -->
+    <TextView
+        android:id="@+id/textViewUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre Usuario"
+        android:textSize="18sp"
+        android:textColor="#666666"
+        app:layout_constraintTop_toBottomOf="@id/textViewWelcome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- Título del Menú -->
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Menú Principal"
-        android:textSize="26sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#333333"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewUsername"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="80dp" />
+        android:layout_marginTop="32dp" />
 
+    <!-- Botones -->
     <Button
         android:id="@+id/button1"
         android:layout_width="0dp"
@@ -30,12 +72,15 @@
         android:text="Añadir Libro"
         android:backgroundTint="#2196F3"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="48dp"
+        android:paddingVertical="16dp"
+        android:textSize="16sp"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        app:cornerRadius="8dp" />
 
     <Button
         android:id="@+id/button2"
@@ -45,10 +90,13 @@
         android:text="Ver Libros"
         android:backgroundTint="#2196F3"
         android:textColor="#FFFFFF"
+        android:paddingVertical="16dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/button_logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button1" />
+        app:layout_constraintTop_toBottomOf="@+id/button1"
+        app:cornerRadius="8dp" />
 
     <Button
         android:id="@+id/button_logout"
@@ -58,10 +106,14 @@
         android:text="Cerrar Sesión"
         android:backgroundTint="#E0E0E0"
         android:textColor="#333333"
+        android:paddingVertical="16dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button2"
-        app:layout_constraintVertical_bias="0.8"/>
+        app:layout_constraintVertical_bias="0.8"
+        app:cornerRadius="8dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
