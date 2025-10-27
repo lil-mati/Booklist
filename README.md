@@ -18,7 +18,7 @@
 <td width="50%">
 
 ### 👤 Gestión de Usuarios
-- Registro con validación de email
+- Registro de usuario
 - Sistema de login seguro
 - Persistencia de sesión
 
