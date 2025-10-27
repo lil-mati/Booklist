@@ -1,4 +1,4 @@
-# <img src="https://media.giphy.com/media/zGRFEECuXXIJlXtsur/giphy.gif" width="40"> Bookgram
+# <img src="https://media.giphy.com/media/zGRFEECuXXIJlXtsur/giphy.gif" width="40"> Booklist
 
 Pequeña aplicación para guardar libros y organizar lectura
 
@@ -7,7 +7,8 @@ Pequeña aplicación para guardar libros y organizar lectura
 <img src="https://media.tenor.com/NAB1czkIZnoAAAAj/dark-souls-artorias.gif" width="30"> Nadia Muñoz as KnightAzuul
 
 <img src="https://media.tenor.com/kR5_CCBbkDkAAAAi/markazushi.gif" width="30"> Matías Mura as lil-mati
-- Elias Elo as El14s84
+
+<img src="https://media.tenor.com/kDWAb3EF3TgAAAAj/fox-listening-to-music.gif" width="30"> Elias Elo as El14s84
 
 ##
 Made in Android Studio
