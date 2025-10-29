@@ -1,5 +1,6 @@
 package com.example.sqlite_test;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.example.sqlite_test.Models.libro;
 import com.example.sqlite_test.database.DbHelper;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class BookAdapter extends ArrayAdapter<libro> {
@@ -118,32 +120,69 @@ public class BookAdapter extends ArrayAdapter<libro> {
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edit_book, null);
         builder.setView(dialogView);
 
+        final EditText inputTitulo = dialogView.findViewById(R.id.editTextTitulo);
+        final Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
+        final EditText inputAutor = dialogView.findViewById(R.id.editTextAutor);
+        final EditText inputFechaPublicacion = dialogView.findViewById(R.id.editTextFechaPublicacion);
         final EditText inputComment = dialogView.findViewById(R.id.editTextComment);
         final Spinner spinnerStatus = dialogView.findViewById(R.id.spinnerStatus);
 
-        // Setup spinner
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+        inputFechaPublicacion.setOnClickListener(v -> showDatePickerDialog(inputFechaPublicacion));
+
+        // Setup tipo spinner
+        ArrayAdapter<CharSequence> tipoAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.tipos_libro, android.R.layout.simple_spinner_item);
+        tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(tipoAdapter);
+
+        // Setup status spinner
+        ArrayAdapter<CharSequence> statusAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.estados_lectura, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerStatus.setAdapter(adapter);
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerStatus.setAdapter(statusAdapter);
 
         // Pre-fill data
+        inputTitulo.setText(book.getTitulo());
+        if (book.getTipo() > 0 && book.getTipo() <= tipoAdapter.getCount()) {
+            spinnerTipo.setSelection(book.getTipo() - 1);
+        }
+        inputAutor.setText(book.getAutor());
+        inputFechaPublicacion.setText(book.getFechaPublicacion());
         inputComment.setText(book.getComment());
-        spinnerStatus.setSelection(book.getEstado() - 1); // -1 because position is 0-indexed
+        if (book.getEstado() > 0 && book.getEstado() <= statusAdapter.getCount()) {
+            spinnerStatus.setSelection(book.getEstado() - 1); // -1 because position is 0-indexed
+        }
 
 
         // Set up the buttons
         builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                String titulo = inputTitulo.getText().toString();
+                int tipo = spinnerTipo.getSelectedItemPosition() + 1;
+                String autor = inputAutor.getText().toString();
+                String fechaPublicacion = inputFechaPublicacion.getText().toString();
                 String comment = inputComment.getText().toString();
                 int status = spinnerStatus.getSelectedItemPosition() + 1;
 
+                libro libroActualizado = new libro();
+                libroActualizado.setTitulo(titulo);
+                libroActualizado.setTipo(tipo);
+                libroActualizado.setAutor(autor);
+                libroActualizado.setFechaPublicacion(fechaPublicacion);
+                libroActualizado.setComment(comment);
+                libroActualizado.setEstado(status);
+
                 DbHelper dbHelper = new DbHelper(getContext());
-                int rowsAffected = dbHelper.actualizarLibro(book.getId(), comment, status);
+                int rowsAffected = dbHelper.actualizarLibro(book.getId(), libroActualizado);
                 dbHelper.close();
 
                 if (rowsAffected > 0) {
+                    // update book in adapter
+                    book.setTitulo(titulo);
+                    book.setTipo(tipo);
+                    book.setAutor(autor);
+                    book.setFechaPublicacion(fechaPublicacion);
                     book.setComment(comment);
                     book.setEstado(status);
                     notifyDataSetChanged();
@@ -161,6 +200,20 @@ public class BookAdapter extends ArrayAdapter<libro> {
         });
 
         builder.show();
+    }
+
+    private void showDatePickerDialog(final EditText editTextFechaPublicacion) {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                (view, year1, monthOfYear, dayOfMonth) -> {
+                    String selectedDate = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year1;
+                    editTextFechaPublicacion.setText(selectedDate);
+                }, year, month, day);
+        datePickerDialog.show();
     }
 
     private void eliminarLibro(long id, int position) {

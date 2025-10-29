@@ -107,7 +107,7 @@ public class AddBookActivity extends AppCompatActivity {
         int idEstado = posicionEstado + 1;
 
         // Obtener el ID de usuario de SharedPreferences
-        SharedPreferences sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         long userId = sharedPref.getLong("user_id", -1);
 
         if (userId == -1) {

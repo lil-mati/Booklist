@@ -29,12 +29,12 @@ public class LoginActivity extends AppCompatActivity {
         buttonRegister = findViewById(R.id.buttonRegister);
 
         buttonLogin.setOnClickListener(v -> {
-            String usuario = editTextUsername.getText().toString();
-            String contraseña = editTextPassword.getText().toString();
+            String usuario = editTextUsername.getText().toString().trim();
+            String contraseña = editTextPassword.getText().toString().trim();
 
             if(usuario.isEmpty() || contraseña.isEmpty()){
                 Toast.makeText(this, "Por favor, ingrese un usuario y contraseña", Toast.LENGTH_SHORT).show();
-                return; 
+                return;
             }
 
             DbHelper dbHelper = new DbHelper(this);
@@ -42,16 +42,19 @@ public class LoginActivity extends AppCompatActivity {
             dbHelper.close();
 
             if (userId != -1) {
-                // Guardar el ID de usuario en SharedPreferences
-                SharedPreferences sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                // Guardar el ID de usuario Y el nombre de usuario en SharedPreferences
+                SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putLong("user_id", userId);
+                editor.putString("username", usuario);  // LÍNEA CLAVE AGREGADA
+                editor.putBoolean("isLoggedIn", true);
                 editor.apply();
 
                 Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                finish(); // Finaliza LoginActivity para que el usuario no pueda volver con el botón de atrás
+                finish();
             } else {
                 Toast.makeText(this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                 editTextPassword.setText("");
@@ -65,3 +68,5 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 }
+
+

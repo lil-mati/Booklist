@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Fecha de Publicación:"
+                android:text="Fecha de Obtención:"
                 android:textColor="#333333"
                 android:textStyle="bold"/>
 

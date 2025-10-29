@@ -118,6 +118,29 @@ public class DbHelper extends SQLiteOpenHelper {
         
         return count;
     }
+    
+    public int actualizarLibro(long libroId, libro libroActualizado) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(collectionContract.libroEntry.COLUMN_TITULO, libroActualizado.getTitulo());
+        values.put(collectionContract.libroEntry.COLUMN_AUTOR, libroActualizado.getAutor());
+        values.put(collectionContract.libroEntry.COLUMN_FECHA_PUBLICACION, libroActualizado.getFechaPublicacion());
+        values.put(collectionContract.libroEntry.COLUMN_ID_TIPO, libroActualizado.getTipo());
+        values.put(collectionContract.libroEntry.COLUMN_COMENTARIO, libroActualizado.getComment());
+        values.put(collectionContract.libroEntry.COLUMN_ESTADO, libroActualizado.getEstado());
+
+        String selection = collectionContract.libroEntry.COLUMN_ID + " = ?";
+        String[] selectionArgs = { String.valueOf(libroId) };
+
+        int count = db.update(
+                collectionContract.libroEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
+        return count;
+    }
 
     public void insertDatosIniciales() {
         SQLiteDatabase db = this.getWritableDatabase();

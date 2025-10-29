@@ -32,6 +32,8 @@ public class libro {
     public void setFechaPublicacion(String fechaPublicacion) { this.fechaPublicacion = fechaPublicacion; }
     public int getIdTipo() { return idTipo; }
     public void setIdTipo(int idTipo) { this.idTipo = idTipo; }
+    public int getTipo() { return this.idTipo; }
+    public void setTipo(int tipo) { this.idTipo = tipo; }
 
     // Métodos añadidos
     public String getComment() { return comment; }
